@@ -16,7 +16,7 @@ This document will contain the following
 + Elk Server (will be receive logs monitor from Web 1, 2, 3)  
 + Metricbeat (will fetch metrics of Web 1, 2, 3 send to Elk server) 
 + Filebeat (will collect syslog form Web 1, 2, 3 send to ELK Server)
-5. Testing 
+
 
 #### I. The Topology ####
 The purpose of this project is to deploy DVWA (D*mn Vulnerable Web Application) expose to the world network using Load-Balancer as the simulator for training and education purpose. 
