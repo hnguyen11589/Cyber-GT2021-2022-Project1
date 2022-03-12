@@ -66,7 +66,7 @@ Azure Services ==> Resource Groups ==> Create
 + Region: East US
 + Review + Create ==> Create
 
-![Resourse_Group](Images/Resourse_Group.png)
+![Resourse_Group](Images/Resourse_Group.PNG)
 
 ##### 2. Virtual Network #####
 
@@ -79,7 +79,7 @@ Azure Services ==> Virtual Network ==> Create
 + Note: to avoid additional change Do NOT enable DDos Protection Plan
 + Review + Create ==> Create
 
-![Virtual_Net_Read_Team](Images/Virtual_Net_Read_Team.png)
+![Virtual_Net_Read_Team](Images/Virtual_Net_Read_Team.PNG)
 
 ###### 2b Virtual Network for ELK Server ######
 Azure Services ==> Virtual Network ==> Create
@@ -90,7 +90,7 @@ Azure Services ==> Virtual Network ==> Create
 + Note: to avoid additional change Do NOT enable DDos Protection Plan
 + Review + Create ==> Create
 
-![Virtual_Net_ELK](Images/Virtual_Net_ELK.png)
+![Virtual_Net_ELK](Images/Virtual_Net_ELK.PNG)
 
 ###### 2c Establish Connection between ELK and Red_Team_Net ######
 Azure Services ==> Virtual Network ==> Elk ==> Peerings ==> +Add
@@ -99,7 +99,7 @@ Azure Services ==> Virtual Network ==> Elk ==> Peerings ==> +Add
 + Virtual Network: (Select) Red_Team_Net
 + Review + Create ==> Create
 
-![Virtual_Net_Peering](Images/Virtual_Net_Peering.png)
+![Virtual_Net_Peering](Images/Virtual_Net_Peering.PNG)
 
 ##### 3. Network-Security-Group #####
 
@@ -111,7 +111,7 @@ Azure Services ==> Network Security Groups ==> Create
 + Using Inbound and outbound Rule Refer Section 2. 
 + Review + Create ==> Create
 
-![Red_Team_NSG](Images/Red_Team_NSG.png)
+![Red_Team_NSG](Images/Red_Team_NSG.PNG)
 
 ###### 2st Security Group for ELK-Server ######
 
@@ -122,7 +122,7 @@ Azure Services ==> Network Security Groups ==> Create
 + Using Inbound and outbound Rule Refer Section II. 
 + Review + Create ==> Create
 
-![Elk-Server-NSG](Images/Elk-Server-NSG.png)
+![Elk-Server-NSG](Images/Elk-Server-NSG.PNG)
 
 ##### 4. Virtual Machine #####
 
@@ -148,30 +148,30 @@ Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
 (Open Gitbash)
 Run: cat ~/.ssh/id_rsa.pub
 
-![Local_Public_Key](Images/Local_Public_Key.png)
+![Local_Public_Key](Images/Local_Public_Key.PNG)
 
 + (Copy Local Machine Public Key) ==> SSH public Key
 
-![SSH_Public_Key](Images/SSH_Public_Key.png)
+![SSH_Public_Key](Images/SSH_Public_Key.PNG)
 
 + Networking 
 + Virtual Network: Red_Team_Net
 + Subnet 10.0.0.0/24
 + Public IP ==> Create New ==> Name: Jump-Box-IP and Select Static 
 
-![Create_Public_IP](Images/Create_Public_IP.png)
+![Create_Public_IP](Images/Create_Public_IP.PNG)
 
 + NIC Network Security Group: Advanced
 + Configure Network Security Group: Red_Team_NSG
 + Review + Create ==> Create
 
-![Jump-Box-Provisioner](Images/Jump-Box-Provisioner.png)
+![Jump-Box-Provisioner](Images/Jump-Box-Provisioner.PNG)
 
 ###### 4c Create Docker on Jump-box and obtain Docker's SSH public key ######
 Azure Services ==> Virtual Machines ==> Select Jump-Box-Provisioner ==> Start 
 Note: after create my Jump-Box-Provisioner VM I have Public IP 52.152.164.182 yours will be difference. 
 
-![Start_Jump_Box](Images/Start_Jump_Box.png)
+![Start_Jump_Box](Images/Start_Jump_Box.PNG)
 
 + Switch to GitBash
 + run: ssh azadmin@52.152.164.182
@@ -182,7 +182,7 @@ Note: after create my Jump-Box-Provisioner VM I have Public IP 52.152.164.182 yo
 + run: sudo docker pull cyberxsecurity/ansible
 + run: sudo docker run -ti cyberxsecurity/ansible:latest bash
 
-![Connect-Docker](Images/Connect-Docker.png)
+![Connect-Docker](Images/Connect-Docker.PNG)
 
 + run: ssh-keygen
 + (Hit ENTER key when gitbash asking "Enter file in which to save the key (/c/Users/Names/.ssh/id_rsa):")
@@ -190,7 +190,7 @@ Note: after create my Jump-Box-Provisioner VM I have Public IP 52.152.164.182 yo
 + run: cat .ssh/id_rsa.pub
 + (Copy Docker Public Key) NOTE: This will be used to create the rest of Virtual Machine. 
 
-![Docker-SSH-Public-Key](Images/Docker-SSH-Public-Key.png)
+![Docker-SSH-Public-Key](Images/Docker-SSH-Public-Key.PNG)
 
 ###### 4d Create 3-Web DVWA VMs ######
 
@@ -207,7 +207,7 @@ Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
 + SSH public key source: Use existing public key
 + (Copy Docker Public Key which obtain on 4c) ==> SSH public Key
 
-![SSH_Public_Key](Images/SSH_Public_Key.png)
+![SSH_Public_Key](Images/SSH_Public_Key.PNG)
 
 + Networking 
 + Virtual Network: Red_Team_Net
@@ -217,11 +217,11 @@ Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
 + Configure Network Security Group: Red_Team_NSG
 + Review + Create ==> Create
 
-![web-1](Images/web-1.png)
+![web-1](Images/web-1.PNG)
 
 NOTE: Repeat Steps From 4d WEB-1 to Create WEB-2 and WEB-3
 
-![web_1_2_3](Images/web_1_2_3.png)
+![web_1_2_3](Images/web_1_2_3.PNG)
 
 ###### 4f Create ELK-server VM ######
 Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
@@ -235,20 +235,20 @@ Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
 + SSH public key source: Use existing public key
 + (Copy Docker Public Key which obtain on 4c) ==> SSH public Key
 
-![SSH_Public_Key](Images/SSH_Public_Key.png)
+![SSH_Public_Key](Images/SSH_Public_Key.PNG)
 
 + Networking 
 + Virtual Network: ELK
 + Subnet 10.1.0.0/24
 + Public IP ==> Create New ==> Name: ELK-Public-IP and Select Static 
 
-![Elk-Public-IP](Images/Elk-Public-IP.png)
+![Elk-Public-IP](Images/Elk-Public-IP.PNG)
 
 + NIC Network Security Group: Advanced
 + Configure Network Security Group: Elk-Server-NSG
 + Review + Create ==> Create
 
-![Elk-Server-VM](Images/Elk-Server-VM.png)
+![Elk-Server-VM](Images/Elk-Server-VM.PNG)
 
 
 ##### 5 Load-Balancer #####
@@ -261,7 +261,7 @@ Azure Services ==> Load Balancers ==> Create
 + Name: Red_Team_LB_Frontend_IP
 + Public IP Address ==> Create New ==> Name: Red_Team_LB_Frontend_IP Assignment: Statisc ==> OK ==> Add
 
-![LB_Front_IP](Images/LB_Front_IP.png)
+![LB_Front_IP](Images/LB_Front_IP.PNG)
 
 + Backend Pools ==> Add a Backend Pool 
 + Name: RedTeamBackendPool
@@ -271,7 +271,7 @@ Azure Services ==> Load Balancers ==> Create
 + Click Add ==> Select Web 1 2 3 ==> Add ==> Add 
 + Review + Create ==> Create
 
-![LB-Backend-Pool](Images/LB-Backend-Pool.png)
+![LB-Backend-Pool](Images/LB-Backend-Pool.PNG)
 
 ###### 5b Load-Balancing Rules ######
 Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Add 
@@ -284,11 +284,11 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 + Backend Port: 80 
 + Health Probe ==> Create New ==> Name: RedTeamHealthProbe Protocol: TCP Port: 80 ==> Ok 
 
-![Load-balancing-rule](Images/Load-balancing-rule.png)
+![Load-balancing-rule](Images/Load-balancing-rule.PNG)
 
 + click Add. 
 
-![LB_rules](Images/LB_rules.png)
+![LB_rules](Images/LB_rules.PNG)
 
 
 
