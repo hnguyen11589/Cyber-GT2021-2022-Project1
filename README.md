@@ -9,10 +9,10 @@ These files has been tested and deployed with the VM on Azure. They can be used 
 These playbook-files (filebeat-playbook.yml, Install-elk.yml, metricbeat-playbook.yml, pentest-playbook.yml) can be used to deploy Container DVWA Application Web 1, 2, 3, Elk Server which including Metricbeat and Filebeat 
 
 This document will contain the following 
-1. The Topology 
-2. Inbound/Outbound Rules 
-3. Tutorial to Create Virtual-Machines, Virtual-Network, Network-Security-Group, Load-Balancer on Azure. 
-4. Provisioing Ansible/Playbook to configure Elk Server, Web 1 2 3, Filebeat, and Metricbeat
+I. The Topology 
+II. Inbound/Outbound Rules 
+III. Tutorial to Create Virtual-Machines, Virtual-Network, Network-Security-Group, Load-Balancer on Azure. 
+IV. Configure Ansible/Playbook, Provisioing Elk Server, DVWA, Filebeat, and Metricbeat 
 + Elk Server (will be receive logs monitor from Web 1, 2, 3)  
 + Metricbeat (will fetch metrics of Web 1, 2, 3 send to Elk server) 
 + Filebeat (will collect syslog form Web 1, 2, 3 send to ELK Server)
@@ -286,10 +286,10 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 
 ![Load-balancing-rule](Images/Load-balancing-rule.PNG)
 
-+ click Add. 
++ Finsihed Add the Rule.  
 
 ![LB_rules](Images/LB_rules.PNG)
 
-
+#### IV. Configure Ansible/Playbook, Provisioing Elk Server, DVWA, Filebeat, and Metricbeat ####
 
 
