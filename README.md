@@ -473,6 +473,6 @@ Note: At this point we still inside container.
 + After install playbook we can check on your local machine Browser. 
 13.83.126.201:5601/app/kibana#/home ==> Add Log Data ==> System Logs ==> (Getting Started) DEB ==> (Scroll down Module Status) ==> Check data
 
-![file-beat-check](Images/file-beat-check.PNG)
+![file-beat-check](Images/file-beat-check.png)
 
 
