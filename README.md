@@ -23,6 +23,8 @@ IV. Configure Ansible/Playbook, Provisioing Elk Server, DVWA, Filebeat, and Metr
 + Filebeat (will collect syslog form Web 1, 2, 3 send to ELK Server)
 
 
+
+
 #### I. The Topology ####
 The purpose of this project is to deploy DVWA (D*mn Vulnerable Web Application) expose to the world network using Load-Balancer as the simulator for training and education purpose. 
 
@@ -45,6 +47,9 @@ Function:
 | Elk Server   |Monitor     |13.83.126.201 |      10.1.0.4     | Linux           |
 | Load-Balancer|Gateway DVWA|20.119.45.216 |        NONE       | Linux           |
 
+
+
+
 #### II. Inbound/Outbound Rules ####
 + Load-balancer and DVMA NSG(Network Security Group Rules) 
 
@@ -63,15 +68,22 @@ Function:
 | ELK Server    | Yes        | Jump Box IP (10.0.0.4)          |TCP 22(SSH) |
 | ELK Server    | NO         | ANY                             |ANY         |
 
+
+
+
 #### III. Tutorial to provision Virtual-Machines, Virtual-Network, Network-Security-Group, Load-Balancer on Azure ####
 
 ##### 1. Resource Group #####
+
 Azure Services ==> Resource Groups ==> Create
 + Name: Red_Team
 + Region: East US
 + Review + Create ==> Create
 
 ![Resourse_Group](Images/Resourse_Group.PNG)
+
+
+
 
 ##### 2. Virtual Network #####
 
@@ -86,6 +98,8 @@ Azure Services ==> Virtual Network ==> Create
 
 ![Virtual_Net_Read_Team](Images/Virtual_Net_Read_Team.PNG)
 
+
+
 ###### 2b Virtual Network for ELK Server ######
 Azure Services ==> Virtual Network ==> Create
 + Resourse Group: Red_Team
@@ -97,6 +111,8 @@ Azure Services ==> Virtual Network ==> Create
 
 ![Virtual_Net_ELK](Images/Virtual_Net_ELK.PNG)
 
+
+
 ###### 2c Establish Connection between ELK and Red_Team_Net ######
 Azure Services ==> Virtual Network ==> Elk ==> Peerings ==> +Add
 + This Virtual Network Peering link name: ELK-to-Red
@@ -105,6 +121,9 @@ Azure Services ==> Virtual Network ==> Elk ==> Peerings ==> +Add
 + Review + Create ==> Create
 
 ![Virtual_Net_Peering](Images/Virtual_Net_Peering.PNG)
+
+
+
 
 ##### 3. Network-Security-Group #####
 
@@ -118,6 +137,8 @@ Azure Services ==> Network Security Groups ==> Create
 
 ![Red_Team_NSG](Images/Red_Team_NSG.PNG)
 
+
+
 ###### 3b Security Group for ELK-Server ######
 
 Azure Services ==> Network Security Groups ==> Create
@@ -129,6 +150,9 @@ Azure Services ==> Network Security Groups ==> Create
 
 ![Elk-Server-NSG](Images/Elk-Server-NSG.PNG)
 
+
+
+
 ##### 4. Virtual Machine #####
 
 ###### 4a. GitBash + SSH Public Key on Local Machine ######
@@ -139,6 +163,8 @@ Azure Services ==> Network Security Groups ==> Create
 + (Hit ENTER key when gitbash asking "Enter file in which to save the key (/c/Users/Names/.ssh/id_rsa):")
 + (Input Password twice "sample:1234" when gitbash asking "Enter passphrase (empty for no passphrase):")
 + NOTE: remember Password it will be use to shh to Jump-box machine!
+
+
 
 ###### 4b Jumpbox-Virtual Machine ######
 Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
@@ -172,6 +198,8 @@ Run: cat ~/.ssh/id_rsa.pub
 
 ![Jump-Box-Provisioner](Images/Jump-Box-Provisioner.PNG)
 
+
+
 ###### 4c Create Docker on Jump-box and obtain Container's SSH public key ######
 Azure Services ==> Virtual Machines ==> Select Jump-Box-Provisioner ==> Start 
 Note: after create my Jump-Box-Provisioner VM I have Public IP 52.152.164.182 yours will be difference. 
@@ -196,6 +224,9 @@ Note: after create my Jump-Box-Provisioner VM I have Public IP 52.152.164.182 yo
 + (Copy Docker Public Key) NOTE: This will be used to create the rest of Virtual Machine. 
 
 ![Docker-SSH-Public-Key](Images/Docker-SSH-Public-Key.PNG)
+
+
+
 
 ###### 4d Create 3-Web DVWA VMs ######
 
@@ -228,6 +259,8 @@ NOTE: Repeat Steps From 4d WEB-1 to Create WEB-2 and WEB-3
 
 ![web_1_2_3](Images/web_1_2_3.PNG)
 
+
+
 ###### 4f Create ELK-server VM ######
 Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
 + Resourse Group: Red_Team
@@ -256,6 +289,8 @@ Azure Services ==> Virtual Machines ==> Create ==> Virtual Machine
 ![Elk-Server-VM](Images/Elk-Server-VM.PNG)
 
 
+
+
 ##### 5 Load-Balancer #####
 
 ###### 5a Create ELK-server VM ######
@@ -278,6 +313,8 @@ Azure Services ==> Load Balancers ==> Create
 
 ![LB-Backend-Pool](Images/LB-Backend-Pool.PNG)
 
+
+
 ###### 5b Load-Balancing Rules ######
 Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Add 
 + Name: LB_Rules
@@ -294,6 +331,10 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 + Finsihed Add the Rule.  
 
 ![LB_rules](Images/LB_rules.PNG)
+
+
+
+
 
 #### IV. Configure Ansible/Playbook, Provisioing Elk Server, DVWA, Filebeat, and Metricbeat ####
 + This will Get done through GitBash through local machine SSH into Jump-box Public IP (Container Section III (4c)) 
@@ -316,6 +357,8 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 
 ![Inside-Container](Images/Inside-Container.PNG)
 
+
+
 ##### 5a. Ansible/Playbook for DVWA VMs #####
 
 + run: cd /etc/ansible/
@@ -330,6 +373,8 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 
 + SAVE: Hit Control + X then Y
 
+
+
 ##### 5b. Ansible/Playbook for DVWA Elk Server #####
 
 + run: nano install-elk.yml
@@ -343,12 +388,15 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 
 + SAVE: Hit Control + X then Y
 
+
+
 ##### 5c. Establish Connection between DVMA, Elk Server for fast deployment #####
 
 + Note: inside pentest-playbook.yml you will notice hosts: webservers and remote_user: sysadmin
 + Note: inside install-elk.yml you will notice hosts: elk and remote_user: sysadmin
 + Note: remote_user: sysadmin is matching with the User_ID that has been created on Section III (4d + 4f) 
 + Note: we will modify the hosts to connect with webservers, elk, and using USER Login sysadmin 
+
 
 ###### Setup link between hosts on Container + DVWA, ELK based on Based on internal IPs ######
 
@@ -362,6 +410,7 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 
 + SAVE: Hit Control + X then Y
 
+
 ###### Add Remote_user on Host File ######
 
 + run: nano /etc/ansible/ansible.cfg
@@ -371,6 +420,8 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 ![remote-user](Images/remote-user.PNG)
 
 + SAVE: Hit Control + X then Y
+
+
 
 ##### 5d. Deployment DVWA/Elk Server #####
 
@@ -398,10 +449,13 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 
 ![Kibana-webpage](Images/Kibana-webpage.PNG)
 
+
+
 ##### 5e. Ansible/Playbook for Filebeat/Metricbeat #####
 Note: At this point we still inside container. 
 
 ![Inside-Container](Images/Inside-Container.PNG)
+
 
 ###### Download Metricbeat + Filebeat config file ######
 
@@ -410,6 +464,7 @@ Note: At this point we still inside container.
 + run: cd files/
 + run: curl https://gist.githubusercontent.com/slape/5cc350109583af6cbe577bbcc0710c93/raw/eca603b72586fbe148c11f9c87bf96a63cb25760/Filebeat >> /etc/ansible/files/filebeat-config.yml # download filebeat config file. 
 + run: curl https://gist.githubusercontent.com/slape/58541585cc1886d2e26cd8be557ce04c/raw/0ce2c7e744c54513616966affb5e9d96f5e12f73/metricbeat >> /etc/ansible/files/metricbeat-config.yml # download metricbeat config file.
+
 
 ###### Edit Filebeat + Metricbeat config file ######
 
@@ -427,6 +482,8 @@ Note: At this point we still inside container.
 + SAVE: Hit Control + X then Y
 
 ==> Made the exactly same change for Metricbeat. The metricbeat-config.yml will need to be change internal IP to 10.1.0.4
+
+
 
 ##### 5e. Create Playbook for Filebeat + Metricbeat ######
 
@@ -447,6 +504,7 @@ Note: At this point we still inside container.
 
 + SAVE: Hit Control + X then Y
 
+
 ###### Metricbeat.yml ######
 
 + run: cd /etc/ansible/
@@ -460,6 +518,8 @@ Note: At this point we still inside container.
 ![metricbeat-playbook](Images/metricbeat-playbook.PNG)
 
 + SAVE: Hit Control + X then Y
+
+
 
 ##### 5f. Deployment Filebeat/Metricbeat on Elk Server ######
 
