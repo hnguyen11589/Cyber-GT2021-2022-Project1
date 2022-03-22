@@ -9,10 +9,15 @@ These files has been tested and deployed with the VM on Azure. They can be used 
 These playbook-files (filebeat-playbook.yml, Install-elk.yml, metricbeat-playbook.yml, pentest-playbook.yml) can be used to deploy Container DVWA Application Web 1, 2, 3, Elk Server which including Metricbeat and Filebeat 
 
 This document will contain the following 
+
 I. The Topology 
+
 II. Inbound/Outbound Rules 
+
 III. Tutorial to Create Virtual-Machines, Virtual-Network, Network-Security-Group, Load-Balancer on Azure. 
+
 IV. Configure Ansible/Playbook, Provisioing Elk Server, DVWA, Filebeat, and Metricbeat 
++ DVMA (the web host will be install on Web 1 2 3 VMs as well as using Load-Balancer as the Gateway) 
 + Elk Server (will be receive logs monitor from Web 1, 2, 3)  
 + Metricbeat (will fetch metrics of Web 1, 2, 3 send to Elk server) 
 + Filebeat (will collect syslog form Web 1, 2, 3 send to ELK Server)
@@ -48,14 +53,14 @@ Function:
 | Jump Box      | Yes        | Home Public IP(66.188.69.210:22)|TCP 22(SSH) |
 | Jump Box      | No         | ANY Outside IP                  |ANY         |
 | Load-Balancer | Yes        | ANY                             |Any 80(HTTP)|
-| 3-Web Machince| Yes        | Jump Box IP (10.0.0.4           |TCP 22(SSH) |
+| 3-Web Machince| Yes        | Jump Box IP (10.0.0.4)          |TCP 22(SSH) |
 
 + ELK NSG Rules
 
 | Name          | Accessible | IP Addresses/Network            |Port        |
 |---------------|------------|---------------------------------|------------|
 | ELK Server    | Yes        | Home Public IP(66.188.69.210:22)|ANY 5601    |
-| ELK Server    | Yes        | Jump Box IP (10.0.0.4           |TCP 22(SSH) |
+| ELK Server    | Yes        | Jump Box IP (10.0.0.4)          |TCP 22(SSH) |
 | ELK Server    | NO         | ANY                             |ANY         |
 
 #### III. Tutorial to provision Virtual-Machines, Virtual-Network, Network-Security-Group, Load-Balancer on Azure ####
@@ -103,7 +108,7 @@ Azure Services ==> Virtual Network ==> Elk ==> Peerings ==> +Add
 
 ##### 3. Network-Security-Group #####
 
-###### 1st Security Group for DVWA + Provisioner + Load-Balancer ######
+###### 3a Security Group for DVWA + Provisioner + Load-Balancer ######
 Azure Services ==> Network Security Groups ==> Create
 + Resourse Group: Red_Team
 + Name: Red_Team_NSG
@@ -113,7 +118,7 @@ Azure Services ==> Network Security Groups ==> Create
 
 ![Red_Team_NSG](Images/Red_Team_NSG.PNG)
 
-###### 2st Security Group for ELK-Server ######
+###### 3b Security Group for ELK-Server ######
 
 Azure Services ==> Network Security Groups ==> Create
 + Resourse Group: Red_Team
@@ -167,7 +172,7 @@ Run: cat ~/.ssh/id_rsa.pub
 
 ![Jump-Box-Provisioner](Images/Jump-Box-Provisioner.PNG)
 
-###### 4c Create Docker on Jump-box and obtain Docker's SSH public key ######
+###### 4c Create Docker on Jump-box and obtain Container's SSH public key ######
 Azure Services ==> Virtual Machines ==> Select Jump-Box-Provisioner ==> Start 
 Note: after create my Jump-Box-Provisioner VM I have Public IP 52.152.164.182 yours will be difference. 
 
@@ -291,5 +296,183 @@ Azure Services ==> Load Balancer ==> Red_Team_LB ==> Load balancing rules ==> Ad
 ![LB_rules](Images/LB_rules.PNG)
 
 #### IV. Configure Ansible/Playbook, Provisioing Elk Server, DVWA, Filebeat, and Metricbeat ####
++ This will Get done through GitBash through local machine SSH into Jump-box Public IP (Container Section III (4c)) 
++ The Rule already Allow Refer to Section II and Section III (3a) 
+
+| Name          | Accessible | IP Addresses/Network            |Port        |
+|---------------|------------|---------------------------------|------------|
+| Jump Box      | Yes        | Home Public IP(66.188.69.210:22)|TCP 22(SSH) |
+| 3-Web Machince| Yes        | Jump Box IP (10.0.0.4)          |TCP 22(SSH) |
+| ELK Server    | Yes        | Jump Box IP (10.0.0.4)          |TCP 22(SSH) |
+
++ Open Gitbash
++ NOTE: Ensure all VMs is running on Azure. 
+
++ run: ssh azadmin@52.152.164.182
++ run: sudo docker container list -a #Checking the Container already install on Section III (4c)
++ run: docker start mc_multy #your Container Name might difference mine is mc_multy
++ run: docker attach mc_multy #your Container Name might difference mine is mc_multy
++ Note: The container has to be the exact same with the one has been used to create VMs SSH password (Section III (4c))
+
+![Inside-Container](Images/Inside-Container.PNG)
+
+##### 5a. Ansible/Playbook for DVWA VMs #####
+
++ run: cd /etc/ansible/
++ run: nano pentest-playbook.yml
++ Note: Configuration details can be found on this link. 
+
+[pentest-playbook](Ansible/pentest-playbook.yml.txt)
+
++ DVWA Playbook imange (This will be used to provisioning for Web 1 2 3 VMs)
+
+![pentest-playbook](Images/pentest-playbook.PNG)
+
++ SAVE: Hit Control + X then Y
+
+##### 5b. Ansible/Playbook for DVWA Elk Server #####
+
++ run: nano install-elk.yml
++ Note: Configuration details can be found on this link. 
+
+[install-elk](Ansible/Install-elk.yml.txt)
+
++ Elk Playbook imange (This will be used to provisioning for Elk)
+
+![install-elk](Images/install-elk.PNG)
+
++ SAVE: Hit Control + X then Y
+
+##### 5c. Establish Connection between DVMA, Elk Server for fast deployment #####
+
++ Note: inside pentest-playbook.yml you will notice hosts: webservers and remote_user: sysadmin
++ Note: inside install-elk.yml you will notice hosts: elk and remote_user: sysadmin
++ Note: remote_user: sysadmin is matching with the User_ID that has been created on Section III (4d + 4f) 
++ Note: we will modify the hosts to connect with webservers, elk, and using USER Login sysadmin 
+
+###### Setup link between hosts on Container + DVWA, ELK based on Based on internal IPs ######
+
++ run: nano /etc/ansible/hosts
++ Find: #[webservers] 
++ Delete # ==> [webservers] 
++ Add IPs: 10.0.0.5/6/7 ansible_python_interpreter=/usr/bin/python3 (Like picture below) 
++ Also Add [elk] 10.1.0.4 ansible_python_interpreter=/usr/bin/python3 (Like picture below)
+
+![hosts-configuration](Images/hosts-configuration.PNG)
+
++ SAVE: Hit Control + X then Y
+
+###### Add Remote_user on Host File ######
+
++ run: nano /etc/ansible/ansible.cfg
++ Find: #remote_user = root 
++ Change to remote_user = sysadmin (Like picture below) 
+
+![remote-user](Images/remote-user.PNG)
+
++ SAVE: Hit Control + X then Y
+
+##### 5d. Deployment DVWA/Elk Server #####
+
++ NOTE: After this we will have 2 play-book (pentest-playbook for DVWA web 1 2 3  VMs) , (install-elk for Elk VM) 
+
++ run: ansible-playbook pentest-playbook.yml # this might take 15s to 60s 
++ run: ansible-playbook install-elk.yml # this might take 15s to 60s
+
++ After the provisioning success We can test from local machine web-browser with the following rule already applied on Both NSG refer section III (3a + 3b) 
+
+| Name          | Accessible | IP Addresses/Network            |Port        |
+|---------------|------------|---------------------------------|------------|
+| ELK Server    | Yes        | Home Public IP(66.188.69.210:22)|ANY 5601    |
+| Load-Balancer | Yes        | ANY                             |Any 80(HTTP)|
+
++ OPEN: web-browser on your local machine
++ Enter on URL: 20.119.45.216/setup.php
++ This is your Public has been assigned by AZURE during Create Load-Balancer (section III (5a))
+
+![DVWA-webpage](Images/DVWA-webpage.PNG)
+
++ OPEN: web-browser on your local machine
++ Enter on URL: 13.83.126.201:5601/app/kibana#/home
++ This is your Public has been assigned by AZURE during Create Elk VMs (section III (4f))
+
+![Kibana-webpage](Images/Kibana-webpage.PNG)
+
+##### 5e. Ansible/Playbook for Filebeat/Metricbeat #####
+Note: At this point we still inside container. 
+
+![Inside-Container](Images/Inside-Container.PNG)
+
+###### Download Metricbeat + Filebeat config file ######
+
++ run: cd /etc/ansible/
++ run: mkdir files/
++ run: cd files/
++ run: curl https://gist.githubusercontent.com/slape/5cc350109583af6cbe577bbcc0710c93/raw/eca603b72586fbe148c11f9c87bf96a63cb25760/Filebeat >> /etc/ansible/files/filebeat-config.yml # download filebeat config file. 
++ run: curl https://gist.githubusercontent.com/slape/58541585cc1886d2e26cd8be557ce04c/raw/0ce2c7e744c54513616966affb5e9d96f5e12f73/metricbeat >> /etc/ansible/files/metricbeat-config.yml # download metricbeat config file.
+
+###### Edit Filebeat + Metricbeat config file ######
+
++ run: nano filebeat-config.yml
++ Search for output.elasticsearch 
++ Change the IP to your Elk Local IPs (mine is 10.1.0.4) 
+
+![filebeat-config-output.elasticsearch](Images/filebeat-config-output.elasticsearch.PNG)
+
++ Search for setup.kibana:
++ Change the IP to your Elk Local IPs (mine is 10.1.0.4) 
+
+![filebeat-config-setupkibana](Images/filebeat-config-setupkibana.PNG)
+
++ SAVE: Hit Control + X then Y
+
+==> Made the exactly same change for Metricbeat. The metricbeat-config.yml will need to be change internal IP to 10.1.0.4
+
+##### 5e. Create Playbook for Filebeat + Metricbeat ######
+
+###### Filebeat.yml ######
++ Note: At this point we still inside container. 
+
+![Inside-Container](Images/Inside-Container.PNG)
+
++ run: cd /etc/ansible/
++ run: nano filebeat-playbook.yml 
++ Note: Configuration details can be found on this link. 
+
+[filebeat-playbook](Ansible/filebeat-playbook.yml.txt)
+
++ Filebeat Playbook imange (This will be used to provisioning filebeat to Webservers)
+
+![filebeat-playbook](Images/filebeat-playbook.PNG)
+
++ SAVE: Hit Control + X then Y
+
+###### Metricbeat.yml ######
+
++ run: cd /etc/ansible/
++ run: nano metricbeat-playbook.yml 
++ Note: Configuration details can be found on this link. 
+
+[metricbeat-playbook](Ansible/metricbeat-playbook.yml.txt)
+
++ Metricbeat Playbook imange (This will be used to provisioning filebeat to Webservers)
+
+![metricbeat-playbook](Images/metricbeat-playbook.PNG)
+
++ SAVE: Hit Control + X then Y
+
+##### 5f. Deployment Filebeat/Metricbeat on Elk Server ######
+
++ Note: At this point we still inside container. 
+
+![Inside-Container](Images/Inside-Container.PNG)
+
++ run: ansible-playbook filebeat-playbook.yml # this might take 15s to 60s
++ run: ansible-playbook metricbeat-playbook.yml # this might take 15s to 60s
+
++ After install playbook we can check on your local machine Browser. 
+13.83.126.201:5601/app/kibana#/home ==> Add Log Data ==> System Logs ==> (Getting Started) DEB ==> (Scroll down Module Status) ==> Check data
+
+![file-beat-check](Images/file-beat-check.PNG)
 
 
